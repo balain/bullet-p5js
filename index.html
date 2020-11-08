@@ -1,217 +1,60 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=400, initial-scale=1.0">
   <title>P5.js Bullet Chart</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
+  <script src="./js/bullet.js"></script>
 </head>
 <body>
+  <!-- no body is needed. P5.js creates the canvas and draws to it directly -->
 <script>
-  let debug = false
+  // Debugging method
+  let debug = true
+  function dbg(msg) { if (debug) { console.log(msg) } }
 
-  function dbg(msg) {
-    if (debug) { console.log(msg) }
-  }
+  let bullet // bullet chart object
+  let canvas // canvas
 
-  // TODO: Fix the calc of chart/canvas height & bin label display
-  const MIN_VALUE_BAR_HEIGHT_FOR_VALUE_LABELS = 10
-
-  let b // bullet chart object
-  let c // canvas
-
-  /* Create bullet chart in a single run - no looping
+  /*
+   * Create bullet chart in a single run - no looping
+   *
    * Based on Stephen Few's spec: http://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf
+   *
    */
   function setup() {
     let params = getURLParams()
 
-    const label = params.label || params.title || Bullet.DEFAULT_LABEL
+    // Update or remove these settings based on your preference
+    // Only `val` is required
     const val = params.val
-    const max = params.max || Bullet.DEFAULT_MAX
-    const bins = params.bins || Bullet.DEFAULT_BIN_COUNT
-    const width = params.width || Bullet.DEFAULT_WIDTH
-    const height = params.height || Bullet.DEFAULT_HEIGHT
-    const barHeight = params.barHeight || Bullet.DEFAULT_BAR_HEIGHT
-    const fontSize = params.fontSize || Bullet.DEFAULT_FONTSIZE
+    const label = params.label || params.title || DEFAULT_LABEL
+    const max = params.max || DEFAULT_MAX
+    const bins = params.bins || DEFAULT_BIN_COUNT
+    const width = params.width || DEFAULT_WIDTH
+    const height = params.height || DEFAULT_HEIGHT
+    const barHeight = params.barHeight || DEFAULT_BAR_HEIGHT
+    const fontSize = params.fontSize || DEFAULT_FONTSIZE
 
-    dbg(['Constructor arguments: ', decodeURIComponent(label), val, max, bins, width, height,barHeight,fontSize])
-    b = new Bullet(val, decodeURIComponent(label), max, bins, width, height,barHeight,fontSize)
-    
+    // If you remove variables above, remove them from this constructor call, too
+    bullet = new Bullet(val, decodeURIComponent(label), max, bins, width, height,barHeight,fontSize)
+
+    // Add a cross, if set (optional)
     if (params.cross) {
-      b.addCross(params.cross)
+      bullet.addCross(params.cross)
     }
     
-    c = createCanvas(b.getWidth(), b.getHeight())
+    // The bullet object calculates the proper width and height of the canvas
+    canvas = createCanvas(bullet.getWidth(), bullet.getHeight())
+    bullet.display()
+    noLoop()  // Do not execute the draw() method
 
-    b.display()
-    noLoop()
-    // saveCanvas(c, 'bullet', 'png') // Uncomment to download PNG output every time
+    // Uncomment the next line to download PNG output every time
+    // saveCanvas(c, 'bullet', 'png')
   }
 
   function draw() {
-    // no-op
+    // no-op - the chart is drawn in the setup() method
   }
-
-/**
- * Class to create Bullet chart
- */
-class Bullet {
-  DEFAULT_LABEL = ''
-  DEFAULT_MAX = 100
-  DEFAULT_BIN_COUNT = 4
-  DEFAULT_WIDTH = 400
-  DEFAULT_HEIGHT = 30
-  DEFAULT_BAR_HEIGHT = 20
-  DEFAULT_FONTSIZE = 12
-
-  /**
-   * Constructor
-   * @param {number} value - Value
-   * @param {string} label - Text label
-   * @param {number} max - Maximum
-   * @param {number} binCount - Number of bins (2-5)
-   * @param {number} width - Width of the canvas
-   * @param {number} height - Height of the canvas
-   * @param {number} barHeight - Height of the value bar
-   * @param {number} fontSize - Label font size
-   * 
-   */
-  constructor(
-    value, 
-    label = this.DEFAULT_LABEL, 
-    max = this.DEFAULT_MAX, 
-    binCount = this.DEFAULT_BIN_COUNT, 
-    width = this.DEFAULT_WIDTH, 
-    height = this.DEFAULT_HEIGHT, 
-    barHeight = this.DEFAULT_BAR_HEIGHT, 
-    fontSize = this.DEFAULT_FONTSIZE) 
-    {
-    this.buffer = 5  // Horizontal buffer
-    this.vbuffer = 3  // Vertical buffer (above/below chart)
-    
-    this.label = label ? label : ''
-    this.value = value
-    this.max = max
-    this.maxFactor = max/100
-    this.canvasWidth = width
-    this.canvasHeight = height
-    
-    this.binCount = binCount
-    this.fontSize = fontSize * 1
-    this.cx = false
-    
-    this.textWidth = textWidth(this.label)
-    dbg(`textWidth: ${this.textWidth} for label ${this.label}`)
-    // Calculate the bounding box of the chart (without text label)
-    if (this.textWidth > 0) {
-      this.chartX = this.textWidth + (2 * this.buffer)
-    } else {
-      this.chartX = 0
-    }
-    dbg(`chartX: ${this.chartX}`)
-    
-    this.chartY = 0
-    this.chartWidth = this.canvasWidth - this.chartX - this.buffer
-    this.barHeight = barHeight || this.DEFAULT_BAR_HEIGHT
-    this.setHeight(height)
-
-    this.ppp = this.chartWidth / this.max // points per pixel
-  }
-
-  _showValueLabels() { 
-    dbg(`is ${this.chartHeight} >= ${MIN_VALUE_BAR_HEIGHT_FOR_VALUE_LABELS}?`)
-    return (this.chartHeight >= MIN_VALUE_BAR_HEIGHT_FOR_VALUE_LABELS)
-  }
-
-  display() {
-    dbg(`fontSize: ${this.fontSize}, ${typeof this.fontSize}, ${textSize()}`)
-    textSize(this.fontSize)
-    dbg(`textSize = ${textSize()}`)
-    // Label
-    if (textWidth(this.label) > 0) {  // Only print if there's something to print
-      fill(0, 255)
-      textAlign(LEFT, TOP)
-      text(this.label, this.buffer, this.vbuffer)
-    }
-    
-    // Quantitiatve Bins
-    noStroke()
-    let shade = 0
-    // Create the shaded backgrounds
-    for (let i = 0; i < this.binCount; i++) {
-      (i === 0) ? textAlign(LEFT, CENTER) : textAlign(CENTER, CENTER)
-      shade = ((100 * (i + 1)) / (this.binCount + 1))
-      if (shade < 10) { shade *= 10 }
-      
-      fill(0, shade)
-      rect(this.chartX, 0, this.chartWidth - (i * this.chartWidth/this.binCount), this.chartHeight)
-      dbg(this.chartHeight, MIN_VALUE_BAR_HEIGHT_FOR_VALUE_LABELS)
-      dbg(`showing value labels; chartHeight: ${this.chartHeight}; canvasHeight: ${this.canvasHeight} `)
-      if (this._showValueLabels()) {
-        // Value label
-        fill(0, 255)
-        dbg(`in loop: ${i}: `,
-          Math.round(this.max*i/this.binCount), 
-          'x = ', this.chartX + (i * this.chartWidth/this.binCount), 
-          'y = ', (this.chartHeight + (2 * this.vbuffer)))
-        text(
-          Math.round(this.max*i/this.binCount), 
-          this.chartX + (i * this.chartWidth/this.binCount), 
-          (this.chartHeight + (2 * this.vbuffer)))
-      }
-    }
-    if (this._showValueLabels()) {
-    // Right-most value label
-      textAlign(RIGHT, CENTER)
-      text(this.max, this.chartX + this.chartWidth, (this.chartHeight + (2 * this.vbuffer)))
-    }
-    
-    // Main Value Bar
-    fill(0)
-    let bw = this.ppp * this.value
-    let bh = this.barHeight
-    let bx = this.chartX
-    let by = this.chartHeight/2 - bh/2
-    rect(bx, by, bw, bh)
-
-    // Cross
-    if (this.cx) {
-      rect(this.cx, this.cy, this.cw, this.ch)
-    }
-  }
-
-  move() { /* no-op */ }
-
-  addCross(x) {
-    this.cw = 5 // this.barHeight
-    this.cx = this.chartX + (this.ppp * x) - (this.cw/2)
-    this.ch = 0.8 * this.chartHeight //  - (2 * this.vbuffer)
-    this.cy = 0.1 * this.chartHeight // this.vbuffer
-  }
-
-  getWidth() { return(this.canvasWidth) }
-  getHeight() { return(this.canvasHeight) }
-
-  setHeight(h) { 
-    dbg(`setHeight(${h}) called...`)
-    this.chartHeight = h
-    if (this._showValueLabels()) {
-      dbg(`do show labels`)
-      this.chartHeight = height - (4 * this.vbuffer)
-    } else {
-      dbg(`don't show labels`)
-      this.chartHeight = this.canvasHeight
-    }
-    dbg(`setting chartHeight to ${this.chartHeight}`)
-    this.chartHeight = this.canvasHeight - (4 * this.vbuffer)
-
-    if (this.barHeight > this.chartHeight) {
-      this.barHeight = this.chartHeight/3
-    }
-    dbg(`barHeight: ${this.barHeight}; chartHeight: ${this.chartHeight}`)  
-  }
-}
 </script>
 </body>
 </html>

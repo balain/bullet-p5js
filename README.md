@@ -1,47 +1,97 @@
 # bullet-p5js
-Create a bullet chart, based on [Stephen Few's spec: http://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf](http://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf)
+Create a bullet graph, based on [Stephen Few's spec](http://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf)
 
-## About The Project
+## Example Graphs
+![Sample](./images/sample.png)
 
-bullet-p5js
+## Built With
+* [P5.js](https://p5js.org)
 
-![Sample](sample.png)
+## Features
 
-### Built With
-* [P5js](https://p5js.org)
+* URL parameter-driven display
+* Simple installation (one js file, `bullet.js`)
+* Easy to use - most values have reasonable defaults
 
-## Getting Started
+## Usage
+* Download `bullet.js`
+* Create a simple P5.js page (`index.html` is provided as an example)
+* Serve the `index.html` from a standard web server (local or remote) [n.b. opening it as a local file also works]
+* Open the `index.html`
+* Pass in parameters to configure the graph
+  * __Required__
+    * *val*: Bar's value (no default)
+  * __Optional__
+    * *label*: Text label (default: empty string)
+    * *max*: Maximum value of the graph (default: 100)
+    * *bins*: Number of quantitative groups (default: 4)
+    * *width*: Width (in pixels) of the entire canvas (in pixels; default: 400)
+    * *height*: Height (in pixels) of the canvas (in pixels; default: 30)
+    * *barHeight*: Value bar height (in pixels; default: 20)
+    * *fontSize*: Label font size (default: 12)
+    * *cross*: Cross-bar value (not displayed by default)
 
+Note: All defaults are defined at the top of `bullet.js`
+
+## Example
+Example URLs and graphs
+
+### **Value** (here: 80; _N.B. this is the only required setting_)
+![Sample](./images/example-bare.png)
+* file:///C:/path/to/local/copy/of/bullet-p5js/index.html?val=80
+* http://localhost:9000/index.html?max=180&val=137&bins=5&label=Brief%20Label&cross=153
+
+### **Custom label** (here: 'Simple label'; default: no label)
+![Sample](./images/example-label.png)
+
+* file:///C:/path/to/local/copy/of/bullet-p5js/index.html?val=80&label=Simple%20label
+* http://localhost:9000/index.html?val=80&label=Simple%20label
+
+### **Crossbar** (here: at 37; default: no crossbar)
+![Sample](./images/example-cross.png)
+* file:///C:/path/to/local/copy/of/bullet-p5js/index.html?val=80&label=Simple%20label&cross=37
+* http://localhost:9000/index.html?val=80&label=Simple%20label&cross=37
+
+### **Custom bin count** (here: 3; default: 4)
+![Sample](./images/example-bins.png)
+
+* file:///C:/path/to/local/copy/of/bullet-p5js/index.html?val=80&label=Simple%20label&cross=37&bins=3
+* http://localhost:9000/index.html?val=80&label=Simple%20label&cross=37&bins=3
+
+### **Custom maximum value** (here: 150; default: 100)
+![Sample](./images/example-max.png)
+
+* file:///C:/path/to/local/copy/of/bullet-p5js/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150
+* http://localhost:9000/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150
+
+### **Custom canvas height** (here: 50; default: 30)
+![Sample](./images/example-height.png)
+
+* file:///C:/path/to/local/copy/of/bullet-p5js/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150&height=50
+* http://localhost:9000/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150&height=50
+
+### **Custom bar height** (here: 10; default: 20)
+![Sample](./images/example-barheight.png)
+
+* file:///C:/path/to/local/copy/of/bullet-p5js/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150&height=50&barHeight=10
+* http://localhost:9000/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150&height=50&barHeight=10
+
+### **Custom font size** (here: 10; default: 12)
+![Sample](./images/example-fontsize.png)
+
+* file:///C:/path/to/local/copy/of/bullet-p5js/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150&height=50&barHeight=10&fontSize=10
+* http://localhost:9000/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150&height=50&barHeight=10&fontSize=10
+
+
+## Hacking
 * Clone the repo
 ```sh
 git clone https://github.com/balain/bullet-p5js
 ```
-* Serve the `index.html` from a standard web server (local or remote) [n.b. opening it as a local file also works]
-* Open the `index.html`
-* Pass in parameters to configure the chart [*all are optional*]
-  * *label*: Text label (default: empty)
-  * *max*: Maximum value of the chart (default: 100)
-  * *val*: Bar's value (default: 50)
-  * *bins*: Number of quantitative groups (default: 4)
-  * *width*: Width (in pixels) of the entire canvas (in pixels; default: 400)
-  * *height*: Height (in pixels) of the canvas (in pixels; default: 30)
-  * *barHeight*: Value bar height (in pixels; default: 20)
-  * *fontSize*: Label font size (default: 12)
-  * *cross*: Cross-bar value (not displayed by default)
 
 ### Prerequisites
 
-None. (P5.js is loaded from the index.html file)
-
-## Usage
-
-Both URLs below will both generate this same chart:
-
-![Sample](sample.png)
-
-* file:///C:/path/to/local/copy/of/bullet-p5js/index.html?max=180&val=137&bins=5&label=Brief%20Label&cross=153
-
-* http://localhost:9000/index.html?max=180&val=137&bins=5&label=Brief%20Label&cross=153
+None. ([P5.js](https://p5js.org) is loaded from the index.html file)
 
 ## Contributing
 
@@ -63,3 +113,4 @@ Project Link: [https://github.com/balain/bullet-p5js](https://github.com/balain/
 
 ## Acknowledgements
 * [README Template from https://github.com/othneildrew/Best-README-Template](https://github.com/othneildrew/Best-README-Template)
+* [Bullet Graph spec: http://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf](http://www.perceptualedge.com/articles/misc/Bullet_Graph_Design_Spec.pdf)
