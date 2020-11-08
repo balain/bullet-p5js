@@ -188,7 +188,6 @@ class Bullet {
   }
 }
 
-const debug = true
 /**
  * Print debug message
  * @param {string} msg Debug message
