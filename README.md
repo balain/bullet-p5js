@@ -23,8 +23,10 @@ git clone https://github.com/balain/bullet-p5js
   * *max*: Maximum value of the chart (default: 100)
   * *val*: Bar's value (default: 50)
   * *bins*: Number of quantitative groups (default: 4)
-  * *width*: Width (in pixels) of the entire canvas (default: 400)
-  * *height*: Height (in pixels) of the canvas (default: 30)
+  * *width*: Width (in pixels) of the entire canvas (in pixels; default: 400)
+  * *height*: Height (in pixels) of the canvas (in pixels; default: 30)
+  * *barHeight*: Value bar height (in pixels; default: 20)
+  * *fontSize*: Label font size (default: 12)
   * *cross*: Cross-bar value (not displayed by default)
 
 ### Prerequisites
