@@ -82,7 +82,32 @@ Example URLs and graphs
 * file:///C:/path/to/local/copy/of/bullet-p5js/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150&height=50&barHeight=10&fontSize=10
 * http://localhost:9000/index.html?val=80&label=Simple%20label&cross=37&bins=3&max=150&height=50&barHeight=10&fontSize=10
 
-
+## Minimal HTML File
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js"></script>
+  <script src="./js/bullet.js"></script>
+</head>
+<body>
+<script>
+  let bullet // bullet chart object
+  let canvas // canvas
+  function setup() {
+    const val = 33
+    // Simplest chart - just the single value is passed in
+    bullet = new Bullet(val)
+    // All available settings (only `val` is required)
+    // bullet = new Bullet(val, decodeURIComponent(label), max, bins, width, height,barHeight,fontSize)
+    canvas = createCanvas(bullet.getWidth(), bullet.getHeight())
+    bullet.display() // Show the chart
+    noLoop()  // Do not execute the draw() method
+  }
+</script>
+</body>
+</html>
+```
 ## Hacking
 * Clone the repo
 ```sh
